@@ -6,7 +6,7 @@ namespace FeedForwardNeuralNetwork.Math
 {
     public class Matrix : IEnumerable<double>
     {
-        private double[,] _core;
+        private readonly double[,] _core;
 
         public Matrix(double[,] core) 
         {
@@ -15,13 +15,13 @@ namespace FeedForwardNeuralNetwork.Math
 
         public double this[int row, int column]
         {
-            get { return _core[row, column]; }
-            set { _core[row, column] = value; }
+            get => _core[row, column];
+            set => _core[row, column] = value;
         }
 
-        public int Rows { get { return _core.GetLength(0); } }
+        public int Rows => _core.GetLength(0);
 
-        public int Columns { get { return _core.GetLength(1); } }
+        public int Columns => _core.GetLength(1);
 
         public void Apply(Func<double, double> callback)
         {

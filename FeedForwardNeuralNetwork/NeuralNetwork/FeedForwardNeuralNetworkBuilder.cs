@@ -53,7 +53,9 @@ namespace FeedForwardNeuralNetwork.NeuralNetwork
 
         private Matrix[] GetLayers()
         {
-            var layers = new Matrix[_hiddenLayersNeuronsCounts.Length + 2];
+            var layersCount = _hiddenLayersNeuronsCounts.Length + 2;
+            var layers = new Matrix[layersCount];
+
             layers[0] = MatrixFactory.CreateVector(_intputNeuronsCount);
             for (var i = 1; i < layers.Length - 1; i++)
                 layers[i] = MatrixFactory.CreateVector(_hiddenLayersNeuronsCounts[i - 1]);
@@ -64,7 +66,8 @@ namespace FeedForwardNeuralNetwork.NeuralNetwork
 
         private Matrix[] GetWeights()
         {
-            var weights = new Matrix[_hiddenLayersNeuronsCounts.Length + 1];
+            var weightsCount = _hiddenLayersNeuronsCounts.Length + 1;
+            var weights = new Matrix[weightsCount];
             weights[0] = MatrixFactory.CreateRandomMatrix(_hiddenLayersNeuronsCounts[0], _intputNeuronsCount);
             for (var i = 1; i < _hiddenLayersNeuronsCounts.Length; i++)
                 weights[i] = MatrixFactory.CreateRandomMatrix(_hiddenLayersNeuronsCounts[i], _hiddenLayersNeuronsCounts[i - 1]);
