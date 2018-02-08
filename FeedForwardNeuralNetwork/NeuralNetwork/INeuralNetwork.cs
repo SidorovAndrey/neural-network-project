@@ -1,10 +1,10 @@
-﻿using FeedForwardNeuralNetwork.Data;
+﻿using FeedForwardNeuralNetwork.Math;
 
 namespace FeedForwardNeuralNetwork.NeuralNetwork
 {
     public interface INeuralNetwork
     {
-        void Train(TrainingData data);
-        double Predict(InputData data);
+        void Train(Matrix x, Matrix y);
+        Matrix Predict(Matrix data);
     }
 }

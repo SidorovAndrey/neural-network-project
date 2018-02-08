@@ -23,7 +23,7 @@ namespace FeedForwardNeuralNetwork.Math
 
         public int Columns => _core.GetLength(1);
 
-        public void Apply(Func<double, double> callback)
+        public void ApplyToEach(Func<double, double> callback)
         {
             for (int i = 0; i < _core.GetLength(0); i++)
                 for (int j = 0; j < _core.GetLength(1); j++)

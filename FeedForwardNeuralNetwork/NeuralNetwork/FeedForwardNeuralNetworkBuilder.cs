@@ -9,6 +9,7 @@ namespace FeedForwardNeuralNetwork.NeuralNetwork
         private int _outputNeuronsCount = 1;
 
         private int[] _hiddenLayersNeuronsCounts = new int[1];
+        private double _learningRate = 0.01;
 
         public FeedForwardNeuralNetworkBuilder()
         {
@@ -44,33 +45,42 @@ namespace FeedForwardNeuralNetwork.NeuralNetwork
             return this;
         }
 
-        public INeuralNetwork Build()
+        public FeedForwardNeuralNetworkBuilder LearningRate(double rate)
         {
-            var layers = GetLayers();
-            var weights = GetWeights();
-            return new FeedForwardNeuralNetwork(layers, weights);
+            _learningRate = rate;
+            return this;
         }
 
-        private Matrix[] GetLayers()
+        public INeuralNetwork Build()
         {
-            var layersCount = _hiddenLayersNeuronsCounts.Length + 2;
-            var layers = new Matrix[layersCount];
+            var weights = GetWeights();
+            var biases = GetBiases(weights);
+            return new FeedForwardNeuralNetwork(weights, biases, _learningRate);
+        }
 
-            layers[0] = MatrixFactory.CreateVector(_intputNeuronsCount);
-            for (var i = 1; i < layers.Length - 1; i++)
-                layers[i] = MatrixFactory.CreateVector(_hiddenLayersNeuronsCounts[i - 1]);
+        private Matrix[] GetBiases(Matrix[] weights)
+        {
+            var result = new Matrix[weights.Length];
+            for (var i = 0; i < result.Length; i++)
+                result[i] = MatrixFactory.CreateRandomVector(weights[i].Rows);
 
-            layers[layers.Length - 1] = MatrixFactory.CreateVector(_outputNeuronsCount);
-            return layers;
+            return result;
         }
 
         private Matrix[] GetWeights()
         {
             var weightsCount = _hiddenLayersNeuronsCounts.Length + 1;
             var weights = new Matrix[weightsCount];
+
             weights[0] = MatrixFactory.CreateRandomMatrix(_hiddenLayersNeuronsCounts[0], _intputNeuronsCount);
-            for (var i = 1; i < _hiddenLayersNeuronsCounts.Length; i++)
-                weights[i] = MatrixFactory.CreateRandomMatrix(_hiddenLayersNeuronsCounts[i], _hiddenLayersNeuronsCounts[i - 1]);
+            if (_hiddenLayersNeuronsCounts.Length > 1)
+            {
+                for (var i = 1; i < _hiddenLayersNeuronsCounts.Length; i++)
+                    weights[i] = MatrixFactory.CreateRandomMatrix(_hiddenLayersNeuronsCounts[i], _hiddenLayersNeuronsCounts[i - 1]);
+            }
+
+            weights[weightsCount - 1] = MatrixFactory.CreateRandomMatrix(_outputNeuronsCount,
+                _hiddenLayersNeuronsCounts[_hiddenLayersNeuronsCounts.Length - 1]);
 
             return weights;
         }
