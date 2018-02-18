@@ -11,6 +11,9 @@ namespace FeedForwardNeuralNetwork.NeuralNetwork
         private int[] _hiddenLayersNeuronsCounts = new int[1];
         private double _learningRate = 0.01;
 
+        private Func<double, double> _function;
+        private Func<double, double> _direvative;
+
         public FeedForwardNeuralNetworkBuilder()
         {
             for (var i = 0; i < _hiddenLayersNeuronsCounts.Length; i++)
@@ -27,6 +30,12 @@ namespace FeedForwardNeuralNetwork.NeuralNetwork
         {
             _intputNeuronsCount = count;
             return this;
+        }
+
+        public FeedForwardNeuralNetworkBuilder ActivationFunction(Func<double, double> function, Func<double, double> direvative)
+        {
+            _function = function;
+            _direvative = direvative;
         }
 
         public FeedForwardNeuralNetworkBuilder HiddenLayerNeuronsCount(int layer, int count)
@@ -55,7 +64,7 @@ namespace FeedForwardNeuralNetwork.NeuralNetwork
         {
             var weights = GetWeights();
             var biases = GetBiases(weights);
-            return new FeedForwardNeuralNetwork(weights, biases, _learningRate);
+            return new FeedForwardNeuralNetwork(weights, biases, _learningRate, _function, _direvative);
         }
 
         private Matrix[] GetBiases(Matrix[] weights)
