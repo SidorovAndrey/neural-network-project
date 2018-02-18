@@ -1,4 +1,5 @@
-﻿using FeedForwardNeuralNetwork.Math;
+﻿using System;
+using FeedForwardNeuralNetwork.Math;
 
 namespace FeedForwardNeuralNetwork.NeuralNetwork
 {
@@ -7,21 +8,21 @@ namespace FeedForwardNeuralNetwork.NeuralNetwork
         private readonly Matrix[] _weights;
         private readonly Matrix[] _biases;
         private readonly double _learningRate;
-        private readonly Func<double, double> _signum;
-        private readonly Func<double, double> _direvativeSignum;
+        private readonly Func<double, double> _sigmoid;
+        private readonly Func<double, double> _direvativeSigmoid;
 
         public FeedForwardNeuralNetwork(
             Matrix[] weights,
             Matrix[] biases,
             double learningRate,
-            Func<double, double> signum,
-            Func<double, double> direvativeSignum)
+            Func<double, double> sigmoid,
+            Func<double, double> direvativeSigmoid)
         {
             _weights = weights;
             _biases = biases;
             _learningRate = learningRate;
-            _signum = signum;
-            _direvativeSignum = direvativeSignum;
+            _sigmoid = sigmoid;
+            _direvativeSigmoid = direvativeSigmoid;
         }
 
         public void Train(Matrix x, Matrix y)
@@ -30,19 +31,16 @@ namespace FeedForwardNeuralNetwork.NeuralNetwork
 
             var hidden = MatrixMath.Product(_weights[0], input);
             hidden = MatrixMath.Add(hidden, _biases[0]);
-            hidden.ApplyToEach(_signum);
+            hidden.ApplyToEach(_sigmoid);
 
             var output = MatrixMath.Product(_weights[1], hidden);
             output = MatrixMath.Add(output, _biases[1]);
-            output.ApplyToEach(_signum);
-
-            // TODO: figure out all the math stuff here
-            // TODO: generalize algorithm for any layers count
+            output.ApplyToEach(_sigmoid);
 
             // calculate for w[1]
             var outputErrors = MatrixMath.Substract(y, output);
 
-            output.ApplyToEach(_direvativeSignum);
+            output.ApplyToEach(_direvativeSigmoid);
             var outputGradient = MatrixMath.HadamarProduct(output, outputErrors);
             outputGradient = MatrixMath.Product(outputGradient, _learningRate);
 
@@ -51,7 +49,7 @@ namespace FeedForwardNeuralNetwork.NeuralNetwork
             // calculate for w[0]
             var hiddenErrors = MatrixMath.Product(_weights[1].Transpose(), outputErrors);
 
-            hidden.ApplyToEach(_direvativeSignum);
+            hidden.ApplyToEach(_direvativeSigmoid);
             var hiddenGradient = MatrixMath.HadamarProduct(hidden, hiddenErrors);
             hiddenGradient = MatrixMath.Product(hiddenGradient, _learningRate);
 
@@ -70,11 +68,11 @@ namespace FeedForwardNeuralNetwork.NeuralNetwork
 
             var hidden = MatrixMath.Product(_weights[0], input);
             hidden = MatrixMath.Add(hidden, _biases[0]);
-            hidden.ApplyToEach(Sigm);
+            hidden.ApplyToEach(_sigmoid);
 
             var output = MatrixMath.Product(_weights[1], hidden);
             output = MatrixMath.Add(output, _biases[1]);
-            output.ApplyToEach(Sigm);
+            output.ApplyToEach(_sigmoid);
 
             return output;
         }
