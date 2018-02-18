@@ -8,9 +8,9 @@ namespace FeedForwardNeuralNetwork.Math
 
         public static Matrix FromArray(double[] array) 
         {
-            var core = new double[1, array.Length];
+            var core = new double[array.Length, 1];
             for (var i = 0; i < core.Length; i++) 
-                core[0, i] = array[i];
+                core[i, 0] = array[i];
 
             return new Matrix(core);
         }
@@ -22,21 +22,21 @@ namespace FeedForwardNeuralNetwork.Math
 
         public static Matrix CreateVector(int size)
         {
-            var core = new double[1, size];
-            return new Matrix(core);
+            var core = new double[size];
+            return FromArray(core);
         }
 
         public static Matrix CreateMatrix(int rows, int columns)
         {
             var core = new double[rows, columns];
-            return new Matrix(core);
+            return FromArray(core);
         }
 
         public static Matrix CreateRandomVector(int size)
         {
-            var core = new double[1, size];
-            for (var i = 0; i < core.GetLength(1); i++)
-                core[0, i] = GetRandom();
+            var core = new double[size];
+            for (var i = 0; i < core.Length; i++)
+                core[i] = GetRandom();
 
             return FromArray(core);
         }
