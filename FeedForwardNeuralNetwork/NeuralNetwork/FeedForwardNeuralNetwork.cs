@@ -4,9 +4,9 @@ namespace FeedForwardNeuralNetwork.NeuralNetwork
 {
     public class FeedForwardNeuralNetwork : INeuralNetwork
     {
-        private Matrix[] _weights;
-        private Matrix[] _biases;
-        private double _learningRate;
+        private readonly Matrix[] _weights;
+        private readonly Matrix[] _biases;
+        private readonly double _learningRate;
 
         public FeedForwardNeuralNetwork(Matrix[] weights, Matrix[] biases, double learningRate)
         {
