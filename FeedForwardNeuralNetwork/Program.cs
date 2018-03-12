@@ -8,7 +8,8 @@ namespace FeedForwardNeuralNetwork
     {
         private static Random _random = new Random();
 
-        private static TrainData[] _data = {
+        private static TrainData[] _data = 
+        {
             new TrainData
             {
                 X = MatrixFactory.FromArray(new double[] { 0, 1 }),
@@ -41,6 +42,7 @@ namespace FeedForwardNeuralNetwork
                 .HiddenLayerNeuronsCount(1, 2)
                 .OutputLayerNeurons(1)
                 .LearningRate(0.1)
+                .ActivationFunction(ActivationFunctions.Signum, ActivationFunctions.DerevativeSignum)
                 .Build();
 
             Train(nn);
@@ -56,8 +58,6 @@ namespace FeedForwardNeuralNetwork
 
             var result4 = nn.Predict(MatrixFactory.FromArray(new double[] { 1, 1 }));
             Console.WriteLine($"1, 1 => {result4[0, 0]}");
-
-            Console.ReadLine();
         }
 
         private static void Train(INeuralNetwork network)
@@ -68,8 +68,8 @@ namespace FeedForwardNeuralNetwork
                 {
                     network.Train(_data[j].X, _data[j].Y);
                 }
-                //var data = GetRandomData();
-                //network.Train(data.X, data.Y);
+                // var data = GetRandomData();
+                // network.Train(data.X, data.Y);
             }
         }
 

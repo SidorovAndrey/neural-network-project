@@ -36,6 +36,7 @@ namespace FeedForwardNeuralNetwork.NeuralNetwork
         {
             _function = function;
             _direvative = direvative;
+            return this;
         }
 
         public FeedForwardNeuralNetworkBuilder HiddenLayerNeuronsCount(int layer, int count)
