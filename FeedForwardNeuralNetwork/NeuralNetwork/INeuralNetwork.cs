@@ -1,10 +1,12 @@
-﻿using FeedForwardNeuralNetwork.Math;
+﻿using System.Collections.Generic;
+using FeedForwardNeuralNetwork.Data;
+using FeedForwardNeuralNetwork.Math;
 
 namespace FeedForwardNeuralNetwork.NeuralNetwork
 {
     public interface INeuralNetwork
     {
-        void Train(Matrix x, Matrix y);
+        void Train(IEnumerable<IDataSample> samples, int count);
         Matrix Predict(Matrix data);
     }
 }

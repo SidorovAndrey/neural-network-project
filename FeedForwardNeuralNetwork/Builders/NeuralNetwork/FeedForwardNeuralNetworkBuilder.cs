@@ -1,18 +1,18 @@
 ﻿using System;
 using FeedForwardNeuralNetwork.Math;
+using FeedForwardNeuralNetwork.NeuralNetwork;
+using FeedForwardNeuralNetwork.Trainers;
 
-namespace FeedForwardNeuralNetwork.NeuralNetwork
+namespace FeedForwardNeuralNetwork.Builders.NeuralNetwork
 {
-    public class FeedForwardNeuralNetworkBuilder : INeuralNetworkBuilder
+    public class FeedForwardNeuralNetworkBuilder : IFeedForwardNeuralNetworkBuilder
     {
         private int _intputNeuronsCount = 1;
         private int _outputNeuronsCount = 1;
 
         private int[] _hiddenLayersNeuronsCounts = new int[1];
-        private double _learningRate = 0.01;
 
-        private Func<double, double> _function;
-        private Func<double, double> _direvative;
+        private INeuralNetworkTrainer _trainer;
 
         public FeedForwardNeuralNetworkBuilder()
         {
@@ -20,26 +20,19 @@ namespace FeedForwardNeuralNetwork.NeuralNetwork
                 _hiddenLayersNeuronsCounts[i] = 1;
         }
 
-        public FeedForwardNeuralNetworkBuilder HiddenLayers(int count)
+        public IFeedForwardNeuralNetworkBuilder HiddenLayers(int count)
         {
             _hiddenLayersNeuronsCounts = new int[count];
             return this;
         }
 
-        public FeedForwardNeuralNetworkBuilder InputLayerNeurons(int count)
+        public IFeedForwardNeuralNetworkBuilder InputLayersNeuronsCount(int count)
         {
             _intputNeuronsCount = count;
             return this;
         }
 
-        public FeedForwardNeuralNetworkBuilder ActivationFunction(Func<double, double> function, Func<double, double> direvative)
-        {
-            _function = function;
-            _direvative = direvative;
-            return this;
-        }
-
-        public FeedForwardNeuralNetworkBuilder HiddenLayerNeuronsCount(int layer, int count)
+        public IFeedForwardNeuralNetworkBuilder HiddenLayerNeuronsCount(int layer, int count)
         {
             if (layer > _hiddenLayersNeuronsCounts.Length)
                 throw new ArgumentOutOfRangeException(nameof(layer),
@@ -49,23 +42,26 @@ namespace FeedForwardNeuralNetwork.NeuralNetwork
             return this;
         }
 
-        public FeedForwardNeuralNetworkBuilder OutputLayerNeurons(int count)
+        public IFeedForwardNeuralNetworkBuilder OutputLayersNeuronsCount(int count)
         {
             _outputNeuronsCount = count;
             return this;
         }
 
-        public FeedForwardNeuralNetworkBuilder LearningRate(double rate)
+        public IFeedForwardNeuralNetworkBuilder Trainer(INeuralNetworkTrainer trainer)
         {
-            _learningRate = rate;
+            _trainer = trainer;
             return this;
         }
 
         public INeuralNetwork Build()
         {
+            if (_trainer == null)
+                throw new NullReferenceException("Trainer can't be null");
+
             var weights = GetWeights();
             var biases = GetBiases(weights);
-            return new FeedForwardNeuralNetwork(weights, biases, _learningRate, _function, _direvative);
+            return new FeedForwardNeuralNetwork.NeuralNetwork.FeedForwardNeuralNetwork(weights, biases, _trainer);
         }
 
         private Matrix[] GetBiases(Matrix[] weights)

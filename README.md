@@ -1,3 +1,3 @@
 ### TODO:
- - Refactor generalized algorithm
- - Replace Training Process as strategy
+ - add Neural Network Auditor
+ - add sampling

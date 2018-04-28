@@ -1,4 +1,7 @@
 ﻿using System;
+using FeedForwardNeuralNetwork.Builders.NeuralNetwork;
+using FeedForwardNeuralNetwork.Builders.Trainers;
+using FeedForwardNeuralNetwork.Data;
 using FeedForwardNeuralNetwork.Math;
 using FeedForwardNeuralNetwork.NeuralNetwork;
 
@@ -6,43 +9,46 @@ namespace FeedForwardNeuralNetwork
 {
     class Program
     {
-        private static Random _random = new Random();
-
-        private static TrainData[] _data = 
+        private static readonly IDataSample[] Data =
         {
-            new TrainData
+            new DataSample
             {
                 X = MatrixFactory.FromArray(new double[] { 0, 1 }),
                 Y = MatrixFactory.FromArray(new double[] { 1 })
             },
-            new TrainData
+            new DataSample
             {
                 X = MatrixFactory.FromArray(new double[] { 1, 0 }),
                 Y = MatrixFactory.FromArray(new double[] { 1 })
             },
-            new TrainData
+            new DataSample
             {
                 X = MatrixFactory.FromArray(new double[] { 0, 0 }),
                 Y = MatrixFactory.FromArray(new double[] { 0 })
             },
-            new TrainData
+            new DataSample
             {
                 X = MatrixFactory.FromArray(new double[] { 1, 1 }),
                 Y = MatrixFactory.FromArray(new double[] { 0 })
-            }
+            },
         };
 
         static void Main(string[] args)
         {
+            var nnTrainerBuilder = new NeuralNetworkTrainerBuilder();
+            var trainer = nnTrainerBuilder
+                .ActivationFunction(ActivationFunctions.Signum, ActivationFunctions.DerevativeSignum)
+                .LearningRate(0.1)
+                .Build();
+
             var nnb = new FeedForwardNeuralNetworkBuilder();
 
             var nn = nnb
-                .InputLayerNeurons(2)
+                .InputLayersNeuronsCount(2)
                 .HiddenLayers(1)
                 .HiddenLayerNeuronsCount(1, 2)
-                .OutputLayerNeurons(1)
-                .LearningRate(0.1)
-                .ActivationFunction(ActivationFunctions.Signum, ActivationFunctions.DerevativeSignum)
+                .OutputLayersNeuronsCount(1)
+                .Trainer(trainer)
                 .Build();
 
             Train(nn);
@@ -62,21 +68,7 @@ namespace FeedForwardNeuralNetwork
 
         private static void Train(INeuralNetwork network)
         {
-            for (var i = 0; i < 10000; i++)
-            {
-                for (int j = 0; j < _data.Length; j++)
-                {
-                    network.Train(_data[j].X, _data[j].Y);
-                }
-                // var data = GetRandomData();
-                // network.Train(data.X, data.Y);
-            }
-        }
-
-        private static TrainData GetRandomData()
-        {
-            var index = _random.Next(0, _data.Length);
-            return _data[index];
+            network.Train(Data, 10000);
         }
     }
 }
